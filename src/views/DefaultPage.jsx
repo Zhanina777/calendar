@@ -6,13 +6,20 @@ import Header from '../components/Header';
 import myimage from '../assets/calenderimage.jpg';
 import Searchfield from '../components/Searchfield';
 import { useState, useEffect } from 'react';
-const events = [
+function getStoredEvents() {
+  const stored = JSON.parse(localStorage.getItem("events") || "[]");
+  // Add unique ids to stored events if missing
+  return stored.map((e, i) => ({ id: `local-${i}`, ...e }));
+}
+
+const defaultEvents = [
   {id:1, title:'meeting', date:'2026-06-1', description: "about party in aarhus"},
   {id:2, title:'workshop', date:'2026-02-15', description: "designing a new app"},
   {id:3, title:'conference', date:'2026-02-18', description: "annual conference in copenhagen"}
-  
 ];
+
 function DefaultPage() {
+  const [localEvents, setLocalEvents] = useState(getStoredEvents());
 
   //looks for information in webstorage, if there are some,
   //filterText is equal to this value, else it is an empty string
@@ -28,8 +35,11 @@ function DefaultPage() {
   }, [filterText]);
 
 
-  const sortedEvents= events.slice().sort((a,b) =>
-  a.date.localeCompare(b.date, 'en', {sensitivity: 'base'})
+
+  // Combine default and local events
+  const allEvents = [...defaultEvents, ...localEvents];
+  const sortedEvents = allEvents.slice().sort((a,b) =>
+    a.date.localeCompare(b.date, 'en', {sensitivity: 'base'})
   );
 
   //filter events based on the user input (title or description)
@@ -37,6 +47,15 @@ function DefaultPage() {
     event.title.toLowerCase().includes(filterText.toLowerCase()) ||
     event.description.toLowerCase().includes(filterText.toLowerCase())
   );
+
+  // Listen for changes to localStorage (e.g., new events created)
+  useEffect(() => {
+    const onStorage = () => setLocalEvents(getStoredEvents());
+    window.addEventListener('storage', onStorage);
+    // Also update when component mounts
+    onStorage();
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
 
   //event handler function
   //change the value of variable "filtertext"

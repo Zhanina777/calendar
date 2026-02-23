@@ -1,4 +1,22 @@
 /* Make the calendar image smaller */
+input,
+textarea,
+button {
+  display: block;
+  margin: 0.75rem auto;
+  padding: 1rem;
+  font-size: 1rem;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+
+  
+}
+
+textarea{
+  min-height: 150px;
+  resize: vertical;
+}
 .calendar-image {
   width: 200px;
   height: auto;
