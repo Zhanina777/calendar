@@ -6,17 +6,20 @@ import Header from '../components/Header';
 import myimage from '../assets/calenderimage.jpg';
 import Searchfield from '../components/Searchfield';
 import { useState, useEffect } from 'react';
-function getStoredEvents() {
-  const stored = JSON.parse(localStorage.getItem("events") || "[]");
-  // Add unique ids to stored events if missing
-  return stored.map((e, i) => ({ id: `local-${i}`, ...e }));
-}
+
+
+
 
 const defaultEvents = [
   {id:1, title:'meeting', date:'2026-06-1', description: "about party in aarhus"},
   {id:2, title:'workshop', date:'2026-02-15', description: "designing a new app"},
   {id:3, title:'conference', date:'2026-02-18', description: "annual conference in copenhagen"}
 ];
+
+function getStoredEvents() {
+  const stored = JSON.parse(localStorage.getItem("events") || "[]");
+  return stored.map((e, i) => ({ id: `local-${i+1000}`, ...e }));
+}
 
 function DefaultPage() {
   const [localEvents, setLocalEvents] = useState(getStoredEvents());
